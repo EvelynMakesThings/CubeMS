@@ -15,3 +15,4 @@ To build the project, all you have to do is run the following.
 ./configure
 make
 ```
+If you wish to change the directory that make install puts your files, you can instead run `./configure --prefix=/wherever/`. *(default is /usr/local/)*
