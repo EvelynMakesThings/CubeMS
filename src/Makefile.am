@@ -1,5 +1,5 @@
 bin_PROGRAMS = CubeMS
-CubeMS_SOURCES = main.c
+CubeMS_SOURCES = main.c tools.c
 AM_CPPFLAGS = -I$(top_srcdir)/include
 MAINTAINERCLEANFILES = \
     aclocal.m4 configure config.h.in config.log config.status \
