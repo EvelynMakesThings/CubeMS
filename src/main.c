@@ -1,9 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include <CubeMS.h>
+#include <net.h>
 #include <tools.h>
 
+int sockfd;
+struct sockaddr_in server_addr;
+
+int main() {
+    puts("NET_INIT");
+    initNet(&sockfd,&server_addr);
+    close(sockfd);
+    return 0;
+}
+
+/* 
 int main() {
     ServerInfo *test = malloc(sizeof(ServerInfo)); // Placeholder Data
     strcpyS(test->ip,"example.com",sizeof(test->ip));
@@ -20,3 +34,4 @@ int main() {
     printf("Current Map:     %s\n",test->map);
     return 0;
 }
+*/
