@@ -1,7 +1,11 @@
-#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #ifndef CUBEMS_H
 #define CUBEMS_H
+
+// Port to listen on
+#define PORT 80
+#define BUFF_SIZE 1024
 
 // Server Info Structure (Recieved from servers and temporarily stored.)
 typedef struct ServerInfo {
