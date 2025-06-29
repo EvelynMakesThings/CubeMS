@@ -5,3 +5,5 @@ MAINTAINERCLEANFILES = \
     compile config.guess config.sub install-sh missing depcomp \
     ltmain.sh stamp-h1 \
     autom4te.cache
+debug:
+	$(MAKE) CFLAGS="$(CFLAGS) -g -O0 -DDEBUG"
