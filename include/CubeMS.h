@@ -7,6 +7,9 @@
 #define PORT 80
 #define BUFF_SIZE 1024
 
+extern int running;
+extern const char* basePath;
+
 // Server Info Structure (Recieved from servers and temporarily stored.)
 typedef struct ServerInfo {
 	char ip[INET_ADDRSTRLEN];

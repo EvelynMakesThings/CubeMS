@@ -8,45 +8,38 @@
 #include <net.h>
 #include <tools.h>
 
-int sockfd;
+int sockfd,connfd;
 struct sockaddr_in client_addr;
 char BUFFER[BUFF_SIZE];
 int running = 1;
+const char* basePath = "/"; // Should ALWAYS end with a "/".
 
 void sigintHandler(int sig_num) {
-    puts(" recieved... Waiting for next reply.");
+    puts("\nStop signal recieved.");
+    close(sockfd);
     running = 0;
+    return;
 }
 
 int main() {
-    signal(SIGINT, sigintHandler);
+
+    #ifdef DEBUG
+        puts("DEBUG BUILD");
+    #endif
+
+    signal(SIGINT, sigintHandler); // Bind ^C to our custom termination
     puts("NET_INIT");
     netInit(&sockfd);
-    //printf("Server listening on localhost:%d.\n",PORT);
     puts("NET_LOOP");
-    while (running) {
-        netReceive(&sockfd,BUFFER,&client_addr);
+    while (1) {
+        connfd = netReceive(&sockfd,BUFFER,&client_addr); // Wait for a request
+        if (!running) {break;} // Quit loop if ^C pressed.
+        printf("Request from %s:%d\n",inet_ntoa(client_addr.sin_addr),(int)client_addr.sin_port);
+        #ifdef DEBUG
+            puts(BUFFER); // Compile with -DDEBUG or "make debug" for DEBUG to work in the ifdef
+        #endif
+        netRespond(&connfd,BUFFER,&client_addr);
     }
     puts("Stopping...");
-    close(sockfd);
     return 0;
 }
-
-/* 
-int main() {
-    ServerInfo *test = malloc(sizeof(ServerInfo)); // Placeholder Data
-    strcpyS(test->ip,"example.com",sizeof(test->ip));
-    strcpyS(test->desc,"Example Description",sizeof(test->desc));
-    strcpyS(test->map,"default",sizeof(test->map));
-    test->players = 1;
-    test->maxplayers = 20;
-    printf("        Server Printout\n");
-    printf("--------------------------------\n");
-    printf("Server Address:  %s\n",test->ip);
-    printf("Server Desc:     %s\n",test->desc);
-    printf("Current Players: %d\n",test->players);
-    printf("Max Players:     %d\n",test->maxplayers);
-    printf("Current Map:     %s\n",test->map);
-    return 0;
-}
-*/
