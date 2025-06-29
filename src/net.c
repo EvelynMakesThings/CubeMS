@@ -8,6 +8,8 @@
 void netInit(int* sockfd) {
     // Create the socket file descriptor
     *sockfd = socket(AF_INET,SOCK_STREAM,0);
+    int opt = 1;
+    setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (*sockfd < 0) {
         perror("Failed to create network socket.\n");
         exit(EXIT_FAILURE);
