@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h> 
 #include <string.h>
 #include <arpa/inet.h>
 #include <CubeMS.h>
@@ -12,7 +13,13 @@ struct sockaddr_in client_addr;
 char BUFFER[BUFF_SIZE];
 int running = 1;
 
+void sigintHandler(int sig_num) {
+    puts(" recieved... Waiting for next reply.");
+    running = 0;
+}
+
 int main() {
+    signal(SIGINT, sigintHandler);
     puts("NET_INIT");
     netInit(&sockfd);
     //printf("Server listening on localhost:%d.\n",PORT);
@@ -20,7 +27,7 @@ int main() {
     while (running) {
         netReceive(&sockfd,BUFFER,&client_addr);
     }
-    printf("Stopping...");
+    puts("Stopping...");
     close(sockfd);
     return 0;
 }
