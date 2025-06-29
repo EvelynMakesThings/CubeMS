@@ -8,11 +8,19 @@
 #include <tools.h>
 
 int sockfd;
-struct sockaddr_in server_addr;
+struct sockaddr_in client_addr;
+char BUFFER[BUFF_SIZE];
+int running = 1;
 
 int main() {
     puts("NET_INIT");
-    initNet(&sockfd,&server_addr);
+    netInit(&sockfd);
+    //printf("Server listening on localhost:%d.\n",PORT);
+    puts("NET_LOOP");
+    while (running) {
+        netReceive(&sockfd,BUFFER,&client_addr);
+    }
+    printf("Stopping...");
     close(sockfd);
     return 0;
 }
