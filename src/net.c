@@ -105,7 +105,7 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
         netMakeResponse(BUFFER,"Registered.\n","200 OK");
     } else if (strncmp(subPath,"retrieve.do?item=list",strlen("retrieve.do?item=list")) == 0) {
         puts("List request.");
-        netMakeResponse(BUFFER,"say The server is under development... Please wait.\naddserver example.com\n","200 OK");
+        netMakeResponse(BUFFER,"echo The server is under development... Please wait.\naddserver example.com\n","200 OK");
     } else {
         printf("Path \"%s\" not found.\n",path);
         netMakeResponse(BUFFER,"Path-not-found.\n","404 Not Found");
