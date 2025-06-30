@@ -41,5 +41,5 @@ int main() {
         netRespond(&connfd,BUFFER,&client_addr);
     }
     puts("Stopping...");
-    return 0;
+    return EXIT_SUCCESS;
 }

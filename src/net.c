@@ -6,15 +6,15 @@
 #include <CubeMS.h>
 #include <arpa/inet.h>
 
-void netMakeResponse(char* BUFFER,char* body) {
+void netMakeResponse(char* BUFFER,char* body,char* status) {
     snprintf(BUFFER, BUFF_SIZE,
-        "HTTP/1.0 200 OK\r\n"
+        "HTTP/1.0 %s\r\n"
         "Content-Type: text/plain\r\n"
         "Content-Length: %zu\r\n"
         "Connection: close\r\n"
         "\r\n"
         "%s",
-        strlen(body), body);
+        status, strlen(body), body);
 }
 
 void netInit(int* sockfd) {
@@ -85,7 +85,9 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
     strncpy(path, pathStart, pathLen);
     path[pathLen] = 0;
     if (strncmp(path,basePath,strlen(basePath)) != 0) {
-        puts("Base path does not match..."); // Update to respond with 404 later.
+        netMakeResponse(BUFFER,"Path-not-found.\n","404 Not Found");
+        printf("Path \"%s\" not found.\n",path);
+        send(*connfd,BUFFER,strlen(BUFFER),0);
         close(*connfd);
         return;
     }
@@ -99,11 +101,15 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
     memset(BUFFER,0x0,BUFF_SIZE);
 
     if (strncmp(subPath,"register.do?action=add",strlen("register.do?action=add")) == 0) {
-        puts("register");
-        netMakeResponse(BUFFER,"Registered.");
-        send(*connfd,BUFFER,strlen(BUFFER),0);
-        close(*connfd);
+        puts("Register request.");
+        netMakeResponse(BUFFER,"Registered.\n","200 OK");
+    } else if (strncmp(subPath,"retrieve.do?item=list",strlen("retrieve.do?item=list")) == 0) {
+        puts("List request.");
+        netMakeResponse(BUFFER,"say The server is under development... Please wait.\naddserver example.com\n","200 OK");
     } else {
-        puts("Path not found..."); // Update to respond with 404 later.
+        printf("Path \"%s\" not found.\n",path);
+        netMakeResponse(BUFFER,"Path-not-found.\n","404 Not Found");
     }
+    send(*connfd,BUFFER,strlen(BUFFER),0);
+    close(*connfd);
 }
