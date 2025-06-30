@@ -101,11 +101,27 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
         puts(subPath);
     #endif
 
+    // Try to extract X-Forwarded-For if behind proxy
+    char real_ip[INET_ADDRSTRLEN] = {0};
+    char* xff = strstr(BUFFER, "X-Forwarded-For: ");
+    if (xff) {
+        xff += strlen("X-Forwarded-For: ");
+        char* xff_end = strchr(xff, '\r');
+        if (!xff_end) xff_end = strchr(xff, '\n');
+        if (xff_end && (size_t)(xff_end - xff) < INET_ADDRSTRLEN) {
+            strncpy(real_ip, xff, xff_end - xff);
+            real_ip[xff_end - xff] = '\0';
+        }
+    }
+    if (real_ip[0] == '\0') {
+        strncpy(real_ip, inet_ntoa(client_addr->sin_addr), INET_ADDRSTRLEN);
+    }
+
     memset(BUFFER,0x0,BUFF_SIZE);
 
     if (strncmp(subPath,"register.do?action=add",strlen("register.do?action=add")) == 0) {
         puts("Register request.");
-        int succ = UpdateServer(Addresses,inet_ntoa(client_addr->sin_addr));
+        int succ = UpdateServer(Addresses,real_ip);
         if (succ < 0) {
             puts("Could not find a slot! Server count full...");
             netMakeResponse(BUFFER,"Failed to register... Too many servers.\n","500 Internal Server Error");
