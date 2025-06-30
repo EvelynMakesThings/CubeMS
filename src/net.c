@@ -3,8 +3,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <strings.h>
-#include <CubeMS.h>
+#include <time.h>
 #include <arpa/inet.h>
+#include "CubeMS.h"
+#include "net.h"
+#include "tools.h"
 
 void netMakeResponse(char* BUFFER,char* body,char* status) {
     snprintf(BUFFER, BUFF_SIZE,
@@ -64,7 +67,7 @@ int netReceive(int* sockfd,char* BUFFER,struct sockaddr_in* client_addr) {
     }
     
     read(connfd,BUFFER,BUFF_SIZE);
-    BUFFER[BUFF_SIZE] = '\0';
+    BUFFER[BUFF_SIZE-1] = '\0';
     return connfd;
 }
 
@@ -102,10 +105,31 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
 
     if (strncmp(subPath,"register.do?action=add",strlen("register.do?action=add")) == 0) {
         puts("Register request.");
-        netMakeResponse(BUFFER,"Registered.\n","200 OK");
+        int succ = UpdateServer(Addresses,inet_ntoa(client_addr->sin_addr));
+        if (succ < 0) {
+            puts("Could not find a slot! Server count full...");
+            netMakeResponse(BUFFER,"Failed to register... Too many servers.\n","500 Internal Server Error");
+        } else {
+            #ifdef DEBUG
+                if (succ == 0) {
+                    puts("New slot used.");
+                } else {
+                    puts("Reused old slot.");
+                }
+            #endif
+            netMakeResponse(BUFFER,"Registered.\n","200 OK");
+        }
     } else if (strncmp(subPath,"retrieve.do?item=list",strlen("retrieve.do?item=list")) == 0) {
         puts("List request.");
-        netMakeResponse(BUFFER,"echo The server is under development... Please wait.\naddserver example.com\n","200 OK");
+        netMakeResponse(BUFFER,"echo The server is under development... Expect issues.\n","200 OK");
+        for (int i = 0; i < MAX_SERVERS; i++) {
+            #ifdef DEBUG
+                printf("Slot %d: active=%d, address='%s'\n", i, Addresses[i].active, Addresses[i].address);
+            #endif
+            if (Addresses[i].active == 0x1) {
+                AddServer(BUFFER,Addresses[i].address);
+            }
+        }
     } else {
         printf("Path \"%s\" not found.\n",path);
         netMakeResponse(BUFFER,"Path-not-found.\n","404 Not Found");
