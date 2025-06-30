@@ -138,11 +138,11 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
         }
     } else if (strncmp(subPath,"retrieve.do?item=list",strlen("retrieve.do?item=list")) == 0) {
         puts("List request.");
+        strcpy(body,"echo The server is under development... Expect issues.\n");
         for (int i = 0; i < MAX_SERVERS; i++) {
             #ifdef DEBUG
                 printf("Slot %d: active=%d, address='%s'\n", i, Addresses[i].active, Addresses[i].address);
             #endif
-            strcpy(body,"echo The server is under development... Expect issues.\n");
             if (Addresses[i].active == 0x1) {
                 AddServer(body,Addresses[i].address);
             }
