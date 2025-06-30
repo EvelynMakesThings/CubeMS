@@ -10,13 +10,4 @@
 extern int running;
 extern const char* basePath;
 
-// Server Info Structure (Recieved from servers and temporarily stored.)
-typedef struct ServerInfo {
-	char ip[INET_ADDRSTRLEN];
-	char desc[128];
-	int players;
-	int maxplayers;
-	char map[64];
-} ServerInfo;
-
 #endif
