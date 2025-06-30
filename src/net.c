@@ -118,6 +118,7 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
     }
 
     memset(BUFFER,0x0,BUFF_SIZE);
+    char body[BUFF_SIZE] = {0x0};
 
     if (strncmp(subPath,"register.do?action=add",strlen("register.do?action=add")) == 0) {
         puts("Register request.");
@@ -137,14 +138,15 @@ void netRespond(int* connfd,char* BUFFER,struct sockaddr_in* client_addr) {
         }
     } else if (strncmp(subPath,"retrieve.do?item=list",strlen("retrieve.do?item=list")) == 0) {
         puts("List request.");
-        netMakeResponse(BUFFER,"echo The server is under development... Expect issues.\n","200 OK");
         for (int i = 0; i < MAX_SERVERS; i++) {
             #ifdef DEBUG
                 printf("Slot %d: active=%d, address='%s'\n", i, Addresses[i].active, Addresses[i].address);
             #endif
+            strcpy(body,"echo The server is under development... Expect issues.\n");
             if (Addresses[i].active == 0x1) {
-                AddServer(BUFFER,Addresses[i].address);
+                AddServer(body,Addresses[i].address);
             }
+            netMakeResponse(BUFFER,body,"200 OK");
         }
     } else {
         printf("Path \"%s\" not found.\n",path);
