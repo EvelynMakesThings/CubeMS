@@ -26,7 +26,7 @@ void netInit(int* sockfd) {
     int opt = 1;
     setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // Reuse because TCP sucks
     if (*sockfd < 0) {
-        perror("Failed to create network socket.\n");
+        perror("Failed to create network socket");
         exit(EXIT_FAILURE);
     }
 
