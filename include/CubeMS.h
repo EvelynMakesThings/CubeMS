@@ -3,10 +3,12 @@
 #ifndef CUBEMS_H
 #define CUBEMS_H
 
-#define PORT 80
+// These are the DEFAULT values. These will be modifiable via arguments.
+#define d_PORT 80
+#define d_TTL 3600 // 1 hour, the default value in dedicated cube servers.
+
 #define BUFF_SIZE 2048
 #define MAX_SERVERS 100
-#define TTL 3600 // 1 hour, the default value in dedicated cube servers.
 
 typedef struct ip {
 	char	active;
@@ -15,7 +17,9 @@ typedef struct ip {
 } ip;
 
 extern int running;
-extern const char* basePath;
+extern char basePath[BUFF_SIZE];
+extern int PORT;
+extern int TTL;
 extern ip Addresses[MAX_SERVERS];
 
 #endif
