@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         puts("DEBUG BUILD");
     #endif
 
-    for (int i = 0; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i],"-h") == 0 || strcmp(argv[i],"--help") == 0) {
             printf(
                 "Cube Master Server\n\n"
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
             }
             strcpy(basePath,s);
         } else {
-            fprintf(stderr,"Unknown option \"%s\".",argv[i]);
+            fprintf(stderr,"Unknown option \"%s\".\n",argv[i]);
             return 1;
         }
     }
