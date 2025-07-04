@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
             strcpy(basePath,s);
+            i++;
         } else {
             fprintf(stderr,"Unknown option \"%s\".\n",argv[i]);
             return 1;
